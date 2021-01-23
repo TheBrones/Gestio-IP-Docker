@@ -34,7 +34,7 @@ CMD ["/usr/bin/supervisord", "-n"]
 #Just a note 
 #docker rm $(docker ps --filter "status=exited" -q)
 
-
+#https://www.gestioip.net/docu/GestioIP_3.5_Installation_Guide.pdf
 #+-------------------------------------------------------+
 #|                                                       |
 #|    Installation of GestioIP successfully finished!    |
