@@ -29,7 +29,11 @@ EXPOSE 80
 #RUN chmod -v +x /run-apache.sh
 
 #some trial and error to keep it running (temp)
-CMD ["/usr/bin/supervisord", "-n"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["while true; do :; done & kill -STOP $! && wait $!"]
+
+#ENTRYPOINT ["echo"]
+#CMD ["Hello from CMD"]
 
 #Just a note 
 #docker rm $(docker ps --filter "status=exited" -q)
