@@ -64,3 +64,11 @@ CMD /usr/sbin/apache2ctl -D FOREGROUND
 #|        the password is: "gipadminpassword"            |
 #|                                                       |
 #+-------------------------------------------------------+
+#Run manual inside MariaDB container after setup:
+#mysql -h db -u root -p
+#GRANT ALL PRIVILEGES ON gestioip3.* TO gestioip@db IDENTIFIED BY 'gipadminpassword';
+#GRANT ALL PRIVILEGES ON gestioip3.* TO 'gestioip'@'db' IDENTIFIED BY 'gipadminpassword';
+#GRANT SELECT, INSERT, DELETE ON gestioip3.* TO 'gipadmin'@'localhost';
+#flush privileges;
+
+#remove install files: rm -r /var/www/html/gestioip/install 
