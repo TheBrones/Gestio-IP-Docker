@@ -4,12 +4,14 @@ FROM ubuntu:20.04
 #ARG DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update Ubuntu Software and install some programs to pervent errors 
-RUN apt-get update && apt-get upgrade -y 
-RUN  apt-get install -y curl wget sudo make apt-utils
+# Update Ubuntu Software and install some required packages
+RUN apt-get update 
+RUN apt-get upgrade -y
+RUN apt-get install -y curl wget sudo make apt-utils
 
 #Install Perl and a lot of modules
-RUN apt-get install -y libssl-dev perl libdbd-mysql-perl libdbi-perl  libdbd-mysql-perl libparallel-forkmanager-perl libwww-perl libnet-ip-perl libspreadsheet-parseexcel-perl libsnmp-perl libdate-manip-perl libdate-calc-perl libmailtools-perl libnet-dns-perl libsnmp-info-perl libgd-graph-perl libtext-diff-perl libexpect-perl libxml-parser-perl libxml-simple-perl libtime-parsedate-perl libtext-csv-perl libcrypt-blowfish-perl libcrypt-cbc-perl 
+RUN apt-get install -y libssl-dev perl libdbd-mysql-perl libdbi-perl libdbd-mysql-perl libparallel-forkmanager-perl libwww-perl libnet-ip-perl libspreadsheet-parseexcel-perl libsnmp-perl libdate-manip-perl libdate-calc-perl libmailtools-perl libnet-dns-perl libsnmp-info-perl libgd-graph-perl libtext-diff-perl libexpect-perl libxml-parser-perl libxml-simple-perl libtime-parsedate-perl libtext-csv-perl libcrypt-blowfish-perl libcrypt-cbc-perl 
+
 
 # Download gestioip itself
 RUN curl -L -o gestioip.tar.gz 'https://downloads.sourceforge.net/project/gestioip/gestioip_3.5.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fgestioip%2Ffiles%2Fgestioip_3.5.tar.gz%2Fdownload&ts=1610650147'
@@ -17,23 +19,32 @@ RUN curl -L -o gestioip.tar.gz 'https://downloads.sourceforge.net/project/gestio
 # extract and install gestioip
 # this will als install apache automagicly
 RUN tar xzvf gestioip.tar.gz 
+RUN rm gestioip.tar.gz
 RUN cd gestioip_3.5
 RUN chmod +x gestioip_3.5/setup_gestioip.sh
 RUN bash gestioip_3.5/setup_gestioip.sh
 
+
+# Manually set up the apache environment variables
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+ENV APACHE_LOCK_DIR /var/lock/apache2
+ENV APACHE_PID_FILE /var/run/apache2.pid
+# 2. apache configs + document root
+#ENV APACHE_DOCUMENT_ROOT=/var/www/html/
+#ENV DefaultRuntimeDir=/var/www
+#ENV ServerName=gestioip
+#RUN sed -ri -e '/var/www/html/gestioip' /etc/apache2/sites-available/gestioip.conf
+#RUN sed -ri -e '/var/www/html' /etc/apache2/apache2.conf /etc/apache2/conf-available/gestioip.conf
+
 # Expose Port for the Application 
 EXPOSE 80
 
-
+CMD /usr/sbin/apache2ctl -D FOREGROUND
 #ADD run-apache.sh /run-apache.sh
 #RUN chmod -v +x /run-apache.sh
-
-#some trial and error to keep it running (temp)
-ENTRYPOINT ["/bin/bash"]
-CMD ["while true; do :; done & kill -STOP $! && wait $!"]
-
-#ENTRYPOINT ["echo"]
-#CMD ["Hello from CMD"]
+#CMD ["bash", "/run-apache.sh"]
 
 #Just a note 
 #docker rm $(docker ps --filter "status=exited" -q)
