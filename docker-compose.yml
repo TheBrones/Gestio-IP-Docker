@@ -7,4 +7,17 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-    - 8080:80
+    - 80:80
+  db:
+    image: mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+  #    ports:
+  #      - 8091:3306
+    #volumes:
+      #- /mnt/containerdata/volumes/gestioip/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=gipadminpassword
+      - MYSQL_PASSWORD=gipadminpassword
+      #- MYSQL_DATABASE=gestioip
+      #- MYSQL_USER=gestioip
