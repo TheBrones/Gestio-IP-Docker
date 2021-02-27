@@ -17,5 +17,4 @@ services:
     #volumes:
       #- /mnt/containerdata/volumes/gestioip/db:/var/lib/mysql
     environment:
-      #start first time with:
       - MYSQL_ROOT_PASSWORD=gipadminpassword
