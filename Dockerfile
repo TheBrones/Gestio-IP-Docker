@@ -16,9 +16,8 @@ RUN apt-get install -y libssl-dev perl libdbd-mysql-perl libdbi-perl libdbd-mysq
 RUN curl -L -o gestioip.tar.gz 'https://downloads.sourceforge.net/project/gestioip/gestioip_3.5.tar.gz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fgestioip%2Ffiles%2Fgestioip_3.5.tar.gz%2Fdownload&ts=1610650147'
 
 # extract and install Gestioip
-# this will als install apache automagicly
+# this will install apache automagicly and configure the default password
 RUN tar xzvf gestioip.tar.gz 
-# RUN cd gestioip_3.5
 RUN sed -i 's/GESTIOIP_USER_PASSWORD=""/GESTIOIP_USER_PASSWORD="gipadminpassword"/g' /gestioip_3.5/conf/setup.conf
 
 RUN chmod +x gestioip_3.5/setup_gestioip.sh
@@ -34,6 +33,9 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/gestioip|g' 
 # Move config to make these persistent
 RUN mkdir /usr/share/gestioip/etc-backup
 RUN cp /usr/share/gestioip/etc /usr/share/gestioip/etc-backup -r
+# same for db-config
+RUN mkdir /var/www/html/gestioip/priv-backup
+RUN cp /var/www/html/gestioip/priv /var/www/html/gestioip/priv-backup -r
 
 # Manually set up the apache environment variables
 ENV APACHE_RUN_USER www-data
@@ -45,7 +47,14 @@ ENV APACHE_PID_FILE /var/run/apache2.pid
 # Expose Port for the Application 
 EXPOSE 80
 
-CMD /usr/sbin/apache2ctl -D FOREGROUND
+# Starter that imports configuration after update
+ADD run-apache.sh /run-apache.sh
+RUN chmod -v +x /run-apache.sh
+
+CMD ["/run-apache.sh"]
+
+#simple starter:
+#CMD /usr/sbin/apache2ctl -D FOREGROUND
 
 # Just a note for the tester 
 # docker rm $(docker ps --filter "status=exited" -q)
@@ -55,20 +64,20 @@ CMD /usr/sbin/apache2ctl -D FOREGROUND
 #|                                                       |
 #|    Installation of GestioIP successfully finished!    |
 #|                                                       |
-#|   Please, review /etc/apache2/sites-enabled/gestioip.conf
+#|Please, review /etc/apache2/sites-enabled/gestioip.conf|
 #|          to ensure that all is good and               |
 #|                                                       |
 #|            RESTART the Apache daemon!                 |
 #|                                                       |
 #|            Then, point your browser to                |
 #|                                                       |
-#|           http://server/install              |
+#|           http://server/install                       |
 #|                                                       |
 #|          to configure the database server.            |
 #|                                                       |
 #|         Access with user "gipadmin" and the           |
 #|            password is: "gipadminpassword"            |
-#|                       (Change this later)             |
+#|        (Change this later via the webportal)          |
 #+-------------------------------------------------------+
 
 # Run manual inside gestioip container after db setup through the webpage due to a bug in GestioIp:
