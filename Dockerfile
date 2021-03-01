@@ -85,6 +85,3 @@ CMD ["/run-apache.sh"]
 # GRANT ALL ON gestioip.* TO gestioip@'%' IDENTIFIED BY "gipadminpassword";
 # flush privileges;
 # exit;
-
-# After completing the setup run:
-# Remove install files: rm -r /var/www/html/gestioip/install 

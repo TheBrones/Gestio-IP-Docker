@@ -24,7 +24,7 @@ fi
 
 #set permissions for the gestioip database config (777, yes I know but the Gestioip documentation says so)
 chmod -R 777 /var/www/html/gestioip/priv
-
+chmod -R 777 /usr/share/gestioio/etc
 #start Apache2
 . /etc/apache2/envvars
 /usr/sbin/apache2ctl -D FOREGROUND

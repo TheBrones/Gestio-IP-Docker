@@ -11,14 +11,13 @@ services:
     volumes:
       - c:/docker/gestioip/etc:/usr/share/gestioip/etc
       - c:/docker/gestioip/priv:/var/www/html/gestioip/priv
+    depends_on:
+      - db
   db:
     image: mariadb
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: always
-  #    ports:
-  #      - 8091:3306
     volumes:
       - c:/docker/mariadb:/var/lib/mysql
-      #- /mnt/containerdata/volumes/gestioip/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=gipadminpassword
