@@ -27,10 +27,10 @@ RUN bash gestioip_3.5/setup_gestioip.sh
 RUN rm gestioip.tar.gz
 RUN rm -rf gestioip_3.5
 
-# setup Vhost
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/gestioip|g' /etc/apache2/sites-enabled/000-default.conf
+# Create redirect to /gestioip
+ADD index.html /var/www/html/index.html
 
-# Move config to make these persistent
+# Move config to keep the mounted files
 RUN mkdir /usr/share/gestioip/etc-backup
 RUN cp /usr/share/gestioip/etc /usr/share/gestioip/etc-backup -r
 # same for db-config
@@ -51,27 +51,17 @@ EXPOSE 80
 ADD run-apache.sh /run-apache.sh
 RUN chmod -v +x /run-apache.sh
 
+# Run apache and some start commands
 CMD ["/run-apache.sh"]
-
-#simple starter:
-#CMD /usr/sbin/apache2ctl -D FOREGROUND
-
-# Just a note for the tester 
-# docker rm $(docker ps --filter "status=exited" -q)
 
 #https://www.gestioip.net/docu/GestioIP_3.5_Installation_Guide.pdf
 #+-------------------------------------------------------+
 #|                                                       |
 #|    Installation of GestioIP successfully finished!    |
 #|                                                       |
-#|Please, review /etc/apache2/sites-enabled/gestioip.conf|
-#|          to ensure that all is good and               |
-#|                                                       |
-#|            RESTART the Apache daemon!                 |
-#|                                                       |
 #|            Then, point your browser to                |
 #|                                                       |
-#|           http://server/install                       |
+#|           http://server/gestioip/install              |
 #|                                                       |
 #|          to configure the database server.            |
 #|                                                       |
