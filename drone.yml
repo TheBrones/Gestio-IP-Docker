@@ -1,0 +1,19 @@
+name: default
+kind: pipeline
+type: docker
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    username: 
+      from_secret: DOCKERUSERNAME
+    password: 
+      from_secret: DOCKERPASSWORD
+    repo: thebrones/gestio-ip-docker
+    #auto_tag: true Not working
+    tags: 
+    - dev
+    #- latest
+  when:
+    branch: [ dev ]
+    event: [ push ]
