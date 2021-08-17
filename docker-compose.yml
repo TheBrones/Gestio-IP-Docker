@@ -2,7 +2,8 @@ version: '3.4'
 
 services:
   gestioip:
-    image: gestioip
+    #image: gestioip
+    image: thebrones/gestio-ip-docker:v1.0
     build:
       context: .
       dockerfile: ./Dockerfile
